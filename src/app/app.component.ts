@@ -11,6 +11,7 @@ import {RepresentativeService} from './services/representative.service';
 import {NodeService} from './services/node.service';
 import { LedgerService } from './services';
 import { environment } from 'environments/environment';
+import {TranslateService} from '@ngx-translate/core';
 
 
 @Component({
@@ -32,10 +33,15 @@ export class AppComponent implements OnInit {
     private workPool: WorkPoolService,
     private ledger: LedgerService,
     public price: PriceService,
-    private renderer: Renderer2) {
+    private renderer: Renderer2,
+    private translate: TranslateService) {
       router.events.subscribe(() => {
         this.navExpanded = false;
       });
+
+      // available languages
+      translate.addLangs(['en', 'de', 'sv-se']);
+      translate.setDefaultLang('en');
     }
 
   @ViewChild('selectButton') selectButton: ElementRef;
@@ -75,6 +81,9 @@ export class AppComponent implements OnInit {
 
     // New for v19: Patch saved xrb_ prefixes to nano_
     await this.patchXrbToNanoPrefixData();
+
+    // set translation language
+    this.translate.use(this.settings.settings.language);
 
     this.addressBook.loadAddressBook();
     this.workPool.loadWorkCache();
